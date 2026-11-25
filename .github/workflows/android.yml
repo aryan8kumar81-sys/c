@@ -21,6 +21,17 @@ jobs:
           echo "ANDROID_HOME=$ANDROID_HOME" >> "$GITHUB_ENV"
           echo "ANDROID_NDK_ROOT=$ANDROID_HOME/ndk/26.3.11579264" >> "$GITHUB_ENV"
           echo "ANDROID_NDK_HOME=$ANDROID_HOME/ndk/26.3.11579264" >> "$GITHUB_ENV"
+      - name: Fonts (Inter)
+        run: |
+          mkdir -p fonts
+          if [ ! -f fonts/Inter-Regular.otf ]; then
+            sudo apt-get update -y && sudo apt-get install -y fonts-inter
+            for w in Regular Medium SemiBold Bold; do
+              f=$(find /usr/share/fonts -name "Inter-$w.otf" -o -name "Inter-$w.ttf" | head -n1)
+              if [ -n "$f" ] && [ "${f##*.}" = "otf" ]; then cp "$f" fonts/Inter-$w.otf; fi
+            done
+          fi
+          ls -la fonts
       - uses: dtolnay/rust-toolchain@stable
         with: { targets: aarch64-linux-android }
       - uses: Swatinem/rust-cache@v2
