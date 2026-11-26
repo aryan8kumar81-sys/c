@@ -23,6 +23,8 @@ fastrand = "2"
 slint = { version = "1.19", default-features = false, features = ["std", "compat-1-2", "backend-android-activity-06", "renderer-femtovg"] }
 jni = "0.21"
 ndk-context = "0.1"
+android-activity = { version = "0.6", features = ["native-activity"] }
+log = "0.4"
 
 [target.'cfg(not(target_os = "android"))'.dependencies]
 slint = { version = "1.19", default-features = false, features = ["std", "compat-1-2", "backend-winit", "renderer-femtovg", "renderer-software"] }
@@ -31,11 +33,11 @@ slint = { version = "1.19", default-features = false, features = ["std", "compat
 slint-build = "1.19"
 
 [profile.release]
-opt-level = 3
-lto = "thin"
+opt-level = "s"
+lto = "fat"
 codegen-units = 1
 strip = true
-panic = "abort"
+panic = "unwind"
 
 [package.metadata.android]
 package = "com.aryanweblabs.rootchat"
@@ -67,4 +69,3 @@ unexpected_cfgs = { level = "warn", check-cfg = ['cfg(rootchat_jni_check)'] }
 
 [dev-dependencies]
 png = "0.17"
-
