@@ -1,27 +1,24 @@
 import "../fonts/Inter-Regular.otf";
-import "../fonts/Inter-Medium.otf";
 import "../fonts/Inter-SemiBold.otf";
-import "../fonts/Inter-Bold.otf";
 
 // ───────────────────────── Theme ─────────────────────────
 export global Theme {
     in-out property <bool> dark: true;
-    out property <color> bg: dark ? #17212b : #ffffff;
-    out property <color> chat-bg: dark ? #0e1621 : #d9e3ea;
-    out property <color> header: dark ? #17212b : #ffffff;
-    out property <color> field: dark ? #1f2c3a : #f1f3f5;
-    out property <color> bubble-in: dark ? #182533 : #ffffff;
-    out property <color> bubble-out: dark ? #2b5278 : #e3f6cf;
-    out property <color> accent: dark ? #6ab3f3 : #3390ec;
-    out property <color> accent-strong: #3390ec;
-    out property <color> text: dark ? #f5f5f5 : #101214;
-    out property <color> sub: dark ? #7f91a4 : #707579;
-    out property <color> divider: dark ? #0f1923 : #e7e9ec;
-    out property <color> press: dark ? #202b36 : #e9edf0;
-    out property <color> tick: dark ? #7fc3ff : #4fae4e;
-    out property <color> scrim: #000000;
-    out property <color> online: #4cd964;
-    out property <color> danger: #ec5b5b;
+    out property <color> bg: dark ? #0b0e11 : #ffffff;
+    out property <color> chat-bg: dark ? #0b0e11 : #f3f5f7;
+    out property <color> surface: dark ? #14181d : #f2f4f6;
+    out property <color> surface2: dark ? #1c2229 : #e7eaee;
+    out property <color> line: dark ? #1d232a : #e8ebee;
+    out property <color> text: dark ? #eceff2 : #0e1216;
+    out property <color> sub: dark ? #8a949f : #6a7480;
+    out property <color> accent: dark ? #34d8a4 : #0b8a63;
+    out property <color> accent-solid: #2fd6a0;
+    out property <color> accent-press: #25b98a;
+    out property <color> on-accent: #04140e;
+    out property <color> bubble-out: #0f7f63;
+    out property <color> bubble-in: dark ? #1a2027 : #ffffff;
+    out property <color> danger: #f0616d;
+    out property <color> online: #34d8a4;
 }
 
 export struct ChatItem {
@@ -74,32 +71,32 @@ component Icon inherits Path {
     commands: d;
     stroke: solid ? transparent : c;
     fill: solid ? c : transparent;
-    stroke-width: 2px * size / 24px;
+    stroke-width: 1.8px * size / 24px;
     stroke-line-cap: round;
     stroke-line-join: round;
 }
 
 component Avatar inherits Rectangle {
     in property <string> initials;
-    in property <color> tint: #3390ec;
+    in property <color> tint: #34d8a4;
     in property <bool> online: false;
-    border-radius: self.width / 2;
-    background: @linear-gradient(160deg, tint.brighter(0.15) 0%, tint.darker(0.45) 100%);
+    border-radius: self.width * 0.34;
+    background: @linear-gradient(150deg, tint.darker(0.05) 0%, tint.darker(0.55) 100%);
     Text {
         text: root.initials;
         color: #ffffff;
         font-weight: 600;
-        font-size: root.width * 0.38;
+        font-size: root.width * 0.36;
         horizontal-alignment: center;
         vertical-alignment: center;
         width: 100%;
         height: 100%;
     }
-    dot := Rectangle {
-        width: root.online ? root.width * 0.3 : 0px;
+    Rectangle {
+        width: root.online ? root.width * 0.28 : 0px;
         height: self.width;
-        x: root.width * 0.74;
-        y: root.height * 0.74;
+        x: root.width - self.width * 0.85;
+        y: root.height - self.height * 0.85;
         border-radius: self.width / 2;
         background: Theme.online;
         border-width: 2.5px;
@@ -110,7 +107,7 @@ component Avatar inherits Rectangle {
 
 component Spinner inherits Rectangle {
     in property <bool> active: true;
-    in property <color> c: #ffffff;
+    in property <color> c: Theme.on-accent;
     width: 22px;
     height: 22px;
     Path {
@@ -120,7 +117,7 @@ component Spinner inherits Rectangle {
         viewbox-height: 24;
         commands: "M12 3 A9 9 0 1 1 3 12";
         stroke: root.c;
-        stroke-width: 2.6px;
+        stroke-width: 2.4px;
         fill: transparent;
         stroke-line-cap: round;
         transform-rotation: root.active ? 360deg : 0deg;
@@ -128,19 +125,18 @@ component Spinner inherits Rectangle {
     }
 }
 
-component RoundButton inherits Rectangle {
+component IconButton inherits Rectangle {
     in property <string> d;
-    in property <color> c: Theme.sub;
-    in property <bool> solid: false;
-    in property <length> glyph: 24px;
+    in property <color> c: Theme.text;
+    in property <length> glyph: 22px;
     callback clicked();
     width: 44px;
     height: 44px;
-    border-radius: 22px;
-    background: ta.pressed ? #ffffff22 : transparent;
+    border-radius: 14px;
+    background: ta.pressed ? Theme.surface2 : transparent;
     animate background { duration: 120ms; }
     ta := TouchArea { clicked => { root.clicked(); } }
-    Icon { d: root.d; c: root.c; size: root.glyph; solid: root.solid; x: (parent.width - self.width) / 2; y: (parent.height - self.height) / 2; }
+    Icon { d: root.d; c: root.c; size: root.glyph; x: (parent.width - self.width) / 2; y: (parent.height - self.height) / 2; }
 }
 
 component Field inherits Rectangle {
@@ -151,16 +147,16 @@ component Field inherits Rectangle {
     callback edited <=> inp.edited;
     property <bool> up: inp.has-focus || inp.text != "";
     height: 58px;
-    border-radius: 14px;
-    background: Theme.field;
+    border-radius: 16px;
+    background: Theme.surface;
     border-width: 1.5px;
-    border-color: inp.has-focus ? Theme.accent : #00000000;
+    border-color: inp.has-focus ? Theme.accent : Theme.line;
     animate border-color { duration: 160ms; }
     Text {
         text: root.label;
         x: 16px;
-        y: root.up ? 8px : 19px;
-        font-size: root.up ? 11px : 16px;
+        y: root.up ? 9px : 19px;
+        font-size: root.up ? 11px : 15px;
         color: inp.has-focus ? Theme.accent : Theme.sub;
         animate y, font-size { duration: 160ms; easing: ease-out; }
     }
@@ -181,111 +177,120 @@ component PrimaryButton inherits Rectangle {
     in property <string> label;
     in property <bool> busy: false;
     callback clicked();
-    height: 52px;
-    border-radius: 14px;
-    background: ta.pressed ? #2a7bc4 : Theme.accent-strong;
+    height: 54px;
+    border-radius: 16px;
+    background: ta.pressed ? Theme.accent-press : Theme.accent-solid;
     animate background { duration: 120ms; }
-    transform-scale: ta.pressed ? 0.985 : 1.0;
+    transform-scale: ta.pressed ? 0.98 : 1.0;
     animate transform-scale { duration: 100ms; }
     ta := TouchArea { enabled: !root.busy; clicked => { root.clicked(); } }
-    if !root.busy: Text { text: root.label; color: #ffffff; font-size: 16px; font-weight: 600; horizontal-alignment: center; vertical-alignment: center; }
+    if !root.busy: Text { text: root.label; color: Theme.on-accent; font-size: 16px; font-weight: 600; horizontal-alignment: center; vertical-alignment: center; }
     if root.busy: Spinner { x: (parent.width - self.width) / 2; y: (parent.height - self.height) / 2; }
 }
 
 component Logo inherits Rectangle {
-    border-radius: self.width / 2;
-    background: @linear-gradient(145deg, #4fb6ff 0%, #2a6fdb 55%, #2fd9a6 100%);
+    border-radius: self.width * 0.32;
+    background: @linear-gradient(150deg, #3ff0b4 0%, #16a083 100%);
     Icon {
-        d: "M12 21 L12 11 M12 15 L7 10 L7 6 M12 12 L17 7 L17 4";
-        c: #ffffff;
-        size: root.width * 0.55;
+        d: "M12 20.5 V11 M12 14.5 L7 10 V6 M12 11.5 L17 7 V3.5";
+        c: #04140e;
+        size: root.width * 0.58;
         x: (parent.width - self.width) / 2;
         y: (parent.height - self.height) / 2;
     }
+}
+
+component Title inherits Text {
+    color: Theme.text;
+    font-size: 28px;
+    font-weight: 600;
 }
 
 // ───────────────────────── Chat list ─────────────────────────
 component ChatRow inherits Rectangle {
     in property <ChatItem> c;
     callback clicked();
-    height: 74px;
-    background: ta.pressed ? Theme.press : transparent;
-    animate background { duration: 120ms; }
+    height: 76px;
     property <float> appear: 0;
     init => { self.appear = 1; }
     animate appear { duration: 320ms; easing: ease-out; }
     opacity: appear;
-    ta := TouchArea { clicked => { root.clicked(); } }
-    HorizontalLayout {
-        padding-left: 12px;
-        padding-right: 14px;
-        spacing: 12px;
-        VerticalLayout {
-            alignment: center;
-            Avatar { width: 54px; height: 54px; initials: root.c.initials; tint: root.c.tint; online: root.c.online; }
-        }
-        VerticalLayout {
-            alignment: center;
-            spacing: 4px;
-            HorizontalLayout {
-                spacing: 6px;
-                Text { text: root.c.name; color: Theme.text; font-size: 16px; font-weight: 600; overflow: elide; horizontal-stretch: 1; }
-                if root.c.mine-last: Icon {
-                    d: root.c.seen-last ? "M2 12 L6 16 L14 7 M10 15 L12 17 L21 7" : "M5 12 L10 17 L19 7";
-                    c: Theme.tick;
-                    size: 16px;
-                    y: 3px;
-                }
-                Text { text: root.c.time; color: root.c.unread > 0 ? Theme.accent : Theme.sub; font-size: 12px; vertical-alignment: center; }
+    Rectangle {
+        x: 8px;
+        width: parent.width - 16px;
+        border-radius: 18px;
+        background: ta.pressed ? Theme.surface : transparent;
+        animate background { duration: 120ms; }
+        ta := TouchArea { clicked => { root.clicked(); } }
+        HorizontalLayout {
+            padding-left: 8px;
+            padding-right: 10px;
+            spacing: 13px;
+            VerticalLayout {
+                alignment: center;
+                Avatar { width: 54px; height: 54px; initials: root.c.initials; tint: root.c.tint; online: root.c.online; }
             }
-            HorizontalLayout {
-                spacing: 8px;
-                Text {
-                    text: root.c.typing ? "typing…" : root.c.last;
-                    color: root.c.typing ? Theme.accent : Theme.sub;
-                    font-size: 15px;
-                    overflow: elide;
-                    horizontal-stretch: 1;
+            VerticalLayout {
+                alignment: center;
+                spacing: 4px;
+                HorizontalLayout {
+                    spacing: 6px;
+                    Text { text: root.c.name; color: Theme.text; font-size: 16px; font-weight: 600; overflow: elide; horizontal-stretch: 1; }
+                    if root.c.mine-last: Icon {
+                        d: root.c.seen-last ? "M2 12.5 L6.5 17 L15 7.5 M10.5 15.5 L12 17 L21 7.5" : "M5 12.5 L10 17.5 L19 7.5";
+                        c: root.c.seen-last ? Theme.accent : Theme.sub;
+                        size: 16px;
+                        y: 3px;
+                    }
+                    Text { text: root.c.time; color: root.c.unread > 0 ? Theme.accent : Theme.sub; font-size: 12px; vertical-alignment: center; }
                 }
-                if root.c.unread > 0: Rectangle {
-                    property <float> pop: 0;
-                    init => { self.pop = 1; }
-                    animate pop { duration: 380ms; easing: cubic-bezier(0.3, 1.6, 0.5, 1); }
-                    width: max(22px, badge-text.preferred-width + 12px);
-                    height: 22px;
-                    border-radius: 11px;
-                    background: Theme.accent-strong;
-                    transform-scale: pop;
-                    badge-text := Text {
-                        text: root.c.unread > 99 ? "99+" : root.c.unread;
-                        color: #ffffff;
-                        font-size: 12px;
-                        font-weight: 600;
-                        horizontal-alignment: center;
-                        vertical-alignment: center;
-                        width: 100%;
-                        height: 100%;
+                HorizontalLayout {
+                    spacing: 8px;
+                    Text {
+                        text: root.c.typing ? "typing…" : root.c.last;
+                        color: root.c.typing ? Theme.accent : Theme.sub;
+                        font-size: 14.5px;
+                        overflow: elide;
+                        horizontal-stretch: 1;
+                    }
+                    if root.c.unread > 0: Rectangle {
+                        property <float> pop: 0;
+                        init => { self.pop = 1; }
+                        animate pop { duration: 380ms; easing: cubic-bezier(0.3, 1.6, 0.5, 1); }
+                        width: max(22px, badge-text.preferred-width + 14px);
+                        height: 22px;
+                        border-radius: 11px;
+                        background: Theme.accent-solid;
+                        transform-scale: pop;
+                        badge-text := Text {
+                            text: root.c.unread > 99 ? "99+" : root.c.unread;
+                            color: Theme.on-accent;
+                            font-size: 12px;
+                            font-weight: 600;
+                            horizontal-alignment: center;
+                            vertical-alignment: center;
+                            width: 100%;
+                            height: 100%;
+                        }
                     }
                 }
             }
         }
     }
-    Rectangle { x: 78px; y: parent.height - 1px; height: 1px; width: parent.width - 78px; background: Theme.divider; }
 }
 
 component SkeletonRow inherits Rectangle {
-    height: 74px;
+    height: 76px;
     property <float> p: 0;
     init => { self.p = 1; }
     animate p { duration: 850ms; iteration-count: -1; direction: alternate; easing: ease-in-out; }
-    property <color> shade: Theme.dark ? #223140 : #e6eaee;
     HorizontalLayout {
-        padding-left: 12px; padding-right: 14px; spacing: 12px;
-        VerticalLayout { alignment: center; Rectangle { width: 54px; height: 54px; border-radius: 27px; background: root.shade; opacity: 0.45 + root.p * 0.55; } }
+        padding-left: 16px; padding-right: 16px; spacing: 13px;
+        VerticalLayout { alignment: center; Rectangle { width: 54px; height: 54px; border-radius: 18px; background: Theme.surface2; opacity: 0.4 + root.p * 0.6; } }
         VerticalLayout {
             alignment: center; spacing: 10px;
-            Rectangle { width: 140px; height: 12px; border-radius: 6px; background: root.shade; opacity: 0.45 + root.p * 0.55; }
-            Rectangle { height: 11px; border-radius: 6px; background: root.shade; opacity: 0.45 + root.p * 0.55; }
+            Rectangle { width: 140px; height: 12px; border-radius: 6px; background: Theme.surface2; opacity: 0.4 + root.p * 0.6; }
+            Rectangle { height: 11px; border-radius: 6px; background: Theme.surface; opacity: 0.4 + root.p * 0.6; }
         }
     }
 }
@@ -301,54 +306,55 @@ component MsgRow inherits Rectangle {
     height: lay.preferred-height;
     opacity: appear;
     lay := VerticalLayout {
-        y: (1 - root.appear) * 18px;
+        y: (1 - root.appear) * 16px;
         if root.m.day != "": Rectangle {
-            height: 40px;
-            Rectangle {
-                width: day-text.preferred-width + 20px;
-                height: 24px;
-                border-radius: 12px;
-                background: Theme.dark ? #1d2b3a99 : #00000033;
-                day-text := Text { text: root.m.day; color: #ffffff; font-size: 12px; font-weight: 500; horizontal-alignment: center; vertical-alignment: center; width: 100%; height: 100%; }
+            height: 44px;
+            HorizontalLayout {
+                padding-left: 24px; padding-right: 24px; spacing: 12px;
+                VerticalLayout { alignment: center; Rectangle { height: 1px; background: Theme.line; } }
+                Text { text: root.m.day; color: Theme.sub; font-size: 12px; font-weight: 600; vertical-alignment: center; }
+                VerticalLayout { alignment: center; Rectangle { height: 1px; background: Theme.line; } }
             }
         }
         HorizontalLayout {
-            padding-left: 10px;
-            padding-right: 10px;
-            padding-top: root.m.last-in-group ? 1px : 1px;
-            padding-bottom: root.m.last-in-group ? 5px : 1px;
+            padding-left: 12px;
+            padding-right: 12px;
+            padding-top: 1px;
+            padding-bottom: root.m.last-in-group ? 6px : 1px;
             alignment: root.m.mine ? end : start;
             bubble := Rectangle {
-                width: min(root.maxw, max(body.preferred-width, 62px) + 20px);
+                width: min(root.maxw, max(body.preferred-width, 66px) + 24px);
                 height: col.preferred-height;
                 background: root.m.mine ? Theme.bubble-out : Theme.bubble-in;
-                border-radius: 17px;
-                border-bottom-right-radius: root.m.mine && root.m.last-in-group ? 4px : 17px;
-                border-bottom-left-radius: !root.m.mine && root.m.last-in-group ? 4px : 17px;
+                border-width: (!root.m.mine && !Theme.dark) ? 1px : 0px;
+                border-color: Theme.line;
+                border-radius: 18px;
+                border-bottom-right-radius: root.m.mine && root.m.last-in-group ? 6px : 18px;
+                border-bottom-left-radius: !root.m.mine && root.m.last-in-group ? 6px : 18px;
                 transform-scale: bta.pressed ? 0.985 : 1.0;
                 animate transform-scale { duration: 100ms; }
                 bta := TouchArea { clicked => { root.tapped(); } }
                 col := VerticalLayout {
-                    padding-left: 10px; padding-right: 10px; padding-top: 7px; padding-bottom: 5px; spacing: 1px;
+                    padding-left: 12px; padding-right: 12px; padding-top: 8px; padding-bottom: 6px; spacing: 1px;
                     body := Text {
                         text: root.m.deleted ? "Message deleted" : root.m.text;
                         wrap: word-wrap;
-                        color: root.m.deleted ? Theme.sub : (Theme.dark ? #ffffff : #101214);
-                        font-size: 16px;
+                        color: root.m.deleted ? Theme.sub : (root.m.mine ? #ffffff : Theme.text);
+                        font-size: 15.5px;
                         font-italic: root.m.deleted;
                     }
                     HorizontalLayout {
                         alignment: end;
-                        spacing: 3px;
+                        spacing: 4px;
                         height: 15px;
-                        if root.m.edited && !root.m.deleted: Text { text: "edited"; font-size: 11px; color: Theme.sub; vertical-alignment: center; }
-                        Text { text: root.m.time; font-size: 11px; color: root.m.mine ? (Theme.dark ? #9fc7ec : #5fa35b) : Theme.sub; vertical-alignment: center; }
+                        if root.m.edited && !root.m.deleted: Text { text: "edited"; font-size: 11px; color: root.m.mine ? #ffffffa8 : Theme.sub; vertical-alignment: center; }
+                        Text { text: root.m.time; font-size: 11px; color: root.m.mine ? #ffffffa8 : Theme.sub; vertical-alignment: center; }
                         if root.m.mine && !root.m.deleted: Rectangle {
                             width: 16px;
-                            if root.m.pending: Icon { d: "M12 6 L12 12 L16 14"; c: Theme.sub; size: 12px; x: 2px; y: 2px; }
+                            if root.m.pending: Icon { d: "M12 6.5 V12 L15.5 14"; c: #ffffffa8; size: 13px; x: 1.5px; y: 1px; }
                             if !root.m.pending: Icon {
-                                d: root.m.seen ? "M2 12 L6 16 L14 7 M10 15 L12 17 L21 7" : "M5 12 L10 17 L19 7";
-                                c: root.m.seen ? Theme.tick : (Theme.dark ? #9fc7ec : #5fa35b);
+                                d: root.m.seen ? "M2 12.5 L6.5 17 L15 7.5 M10.5 15.5 L12 17 L21 7.5" : "M5 12.5 L10 17.5 L19 7.5";
+                                c: root.m.seen ? #c4f7e6 : #ffffffa8;
                                 size: 16px;
                             }
                         }
@@ -362,13 +368,13 @@ component MsgRow inherits Rectangle {
 component TypingBubble inherits Rectangle {
     in property <bool> active: false;
     property <int> tick: 0;
-    height: active ? 34px : 0px;
+    height: active ? 36px : 0px;
     clip: true;
     animate height { duration: 180ms; easing: ease-out; }
     Timer { interval: 320ms; running: root.active; triggered => { root.tick = Math.mod(root.tick + 1, 3); } }
     Rectangle {
-        x: 10px;
-        width: 58px;
+        x: 12px;
+        width: 56px;
         height: 28px;
         border-radius: 14px;
         background: Theme.bubble-in;
@@ -376,18 +382,48 @@ component TypingBubble inherits Rectangle {
             alignment: center;
             spacing: 5px;
             for i in 3: Rectangle {
-                width: 7px;
+                width: 6px;
                 Rectangle {
-                    width: 7px;
-                    height: 7px;
-                    border-radius: 3.5px;
+                    width: 6px;
+                    height: 6px;
+                    border-radius: 3px;
                     background: Theme.sub;
                     opacity: root.tick == i ? 1.0 : 0.35;
-                    y: (parent.height - 7px) / 2 + (root.tick == i ? -3px : 0px);
+                    y: (parent.height - 6px) / 2 + (root.tick == i ? -3px : 0px);
                     animate opacity, y { duration: 200ms; }
                 }
             }
         }
+    }
+}
+
+component TabButton inherits Rectangle {
+    in property <string> d;
+    in property <string> label;
+    in property <bool> active: false;
+    in property <int> badge: 0;
+    callback clicked();
+    TouchArea { clicked => { root.clicked(); } }
+    VerticalLayout {
+        alignment: center;
+        spacing: 3px;
+        HorizontalLayout {
+            alignment: center;
+            Rectangle {
+                width: 24px;
+                height: 24px;
+                transform-scale: root.active ? 1.08 : 1.0;
+                animate transform-scale { duration: 200ms; easing: cubic-bezier(0.3, 1.5, 0.5, 1); }
+                Icon { d: root.d; c: root.active ? Theme.accent : Theme.sub; size: 24px; }
+                if root.badge > 0: Rectangle {
+                    x: 14px; y: -4px;
+                    width: max(16px, bt.preferred-width + 8px); height: 16px; border-radius: 8px;
+                    background: Theme.accent-solid;
+                    bt := Text { text: root.badge > 99 ? "99+" : root.badge; color: Theme.on-accent; font-size: 10px; font-weight: 600; horizontal-alignment: center; vertical-alignment: center; width: 100%; height: 100%; }
+                }
+            }
+        }
+        Text { text: root.label; color: root.active ? Theme.accent : Theme.sub; font-size: 11px; font-weight: root.active ? 600 : 400; horizontal-alignment: center; }
     }
 }
 
@@ -400,41 +436,38 @@ export component AppWindow inherits Window {
     default-font-family: "Inter";
     default-font-size: 15px;
 
-    // state
     in-out property <int> screen: 0; // 0 splash, 1 auth, 2 main
     in-out property <bool> signup-mode: false;
+    in-out property <int> tab: 0;
     in-out property <bool> chat-open: false;
-    in-out property <bool> search-open: false;
-    in-out property <bool> profile-open: false;
-    in-out property <bool> drawer-open: false;
     in-out property <bool> sheet-open: false;
     in-out property <bool> dark <=> Theme.dark;
 
     in property <[ChatItem]> chats;
     in property <[MsgItem]> messages;
     in property <[UserItem]> results;
+    in property <int> unread-total: 0;
     in property <bool> loading-chats: true;
     in property <bool> searching: false;
     in property <string> chat-title;
     in property <string> chat-status;
     in property <string> chat-initials;
-    in property <color> chat-tint: #3390ec;
+    in property <color> chat-tint: #34d8a4;
     in property <bool> chat-online: false;
     in property <bool> peer-typing: false;
     in property <string> my-name;
     in property <string> my-username;
     in property <string> my-initials;
     in property <string> my-bio;
-    in property <color> my-tint: #3390ec;
+    in property <color> my-tint: #34d8a4;
     in property <bool> busy: false;
-    in property <string> auth-error;
+    in-out property <string> auth-error;
     in property <string> toast;
     in property <bool> online: true;
 
     in-out property <string> editing-id;
     in-out property <string> sheet-id;
     in-out property <string> sheet-text;
-    in-out property <bool> sheet-mine: false;
     out property <bool> at-bottom: flick.content-y >= flick.height - flick.content-height - 90px;
 
     callback login(string, string);
@@ -455,25 +488,23 @@ export component AppWindow inherits Window {
     public function scroll-bottom() {
         flick.content-y = Math.min(0px, flick.height - flick.content-height);
     }
+    function go-tab(t: int) {
+        root.tab = t;
+        if (t == 1) {
+            root.search-opened();
+            people-in.focus();
+        }
+    }
 
     property <length> chat-x: root.chat-open ? 0px : root.width;
     animate chat-x { duration: 300ms; easing: cubic-bezier(0.22, 0.9, 0.28, 1); }
-    property <length> search-y: root.search-open ? 0px : root.height;
-    animate search-y { duration: 320ms; easing: cubic-bezier(0.22, 0.9, 0.28, 1); }
-    property <length> profile-x: root.profile-open ? 0px : root.width;
-    animate profile-x { duration: 300ms; easing: cubic-bezier(0.22, 0.9, 0.28, 1); }
-    property <length> drawer-x: root.drawer-open ? 0px : -300px;
-    animate drawer-x { duration: 260ms; easing: cubic-bezier(0.22, 0.9, 0.28, 1); }
-    property <length> sheet-y: root.sheet-open ? 0px : 220px;
+    property <length> sheet-y: root.sheet-open ? 0px : 200px;
     animate sheet-y { duration: 240ms; easing: cubic-bezier(0.22, 0.9, 0.28, 1); }
 
-    fs := FocusScope {
+    FocusScope {
         key-pressed(e) => {
             if (e.text == Key.Escape) {
                 if (root.sheet-open) { root.sheet-open = false; return accept; }
-                if (root.drawer-open) { root.drawer-open = false; return accept; }
-                if (root.search-open) { root.search-open = false; return accept; }
-                if (root.profile-open) { root.profile-open = false; return accept; }
                 if (root.chat-open) { root.close-chat(); return accept; }
             }
             reject
@@ -482,55 +513,38 @@ export component AppWindow inherits Window {
 
     // ───────── Splash ─────────
     if root.screen == 0: Rectangle {
-        background: @linear-gradient(180deg, #1b2b3d 0%, #0e1621 100%);
+        background: Theme.bg;
         property <float> a: 0;
         init => { self.a = 1; }
-        animate a { duration: 900ms; easing: cubic-bezier(0.3, 1.4, 0.5, 1); }
-        Logo { width: 112px; height: 112px; x: (parent.width - self.width) / 2; y: parent.height * 0.36; transform-scale: parent.a; opacity: parent.a; }
-        Text { text: "RootChat"; color: #ffffff; font-size: 30px; font-weight: 700; horizontal-alignment: center; x: 0px; width: parent.width; y: parent.height * 0.36 + 140px; opacity: parent.a; }
-        Text { text: "Private. Secure. Real-time."; color: #8aa0b5; font-size: 14px; horizontal-alignment: center; x: 0px; width: parent.width; y: parent.height * 0.36 + 182px; opacity: parent.a; }
+        animate a { duration: 800ms; easing: cubic-bezier(0.3, 1.4, 0.5, 1); }
+        Logo { width: 96px; height: 96px; x: (parent.width - self.width) / 2; y: parent.height * 0.38; transform-scale: parent.a; opacity: parent.a; }
+        Text { text: "RootChat"; color: Theme.text; font-size: 26px; font-weight: 600; horizontal-alignment: center; x: 0px; width: parent.width; y: parent.height * 0.38 + 120px; opacity: parent.a; }
     }
 
     // ───────── Auth ─────────
     auth-bg := Rectangle {
         visible: root.screen == 1;
-        background: @linear-gradient(180deg, #1b2b3d 0%, #0e1621 70%);
+        background: Theme.bg;
         property <float> a: 0;
         init => { self.a = 1; }
         animate a { duration: 500ms; easing: ease-out; }
-        // fields live outside `if` branches so the submit handler can read them
+        Rectangle {
+            height: 320px;
+            background: @radial-gradient(circle, #34d8a42e 0%, #34d8a400 70%);
+        }
         Flickable {
             content-height: max(self.height, authcol.preferred-height + 40px);
             authcol := VerticalLayout {
                 alignment: center;
                 padding-left: 24px; padding-right: 24px; padding-top: 28px; padding-bottom: 28px;
                 spacing: 12px;
-                y: (1 - auth-bg.a) * 26px;
+                y: (1 - auth-bg.a) * 24px;
                 opacity: auth-bg.a;
-                HorizontalLayout { alignment: center; Logo { width: 84px; height: 84px; } }
-                Text { text: root.signup-mode ? "Create account" : "Welcome back"; color: #ffffff; font-size: 26px; font-weight: 700; horizontal-alignment: center; }
-                Text { text: root.signup-mode ? "Join RootChat in a few seconds" : "Log in to continue to RootChat"; color: #8aa0b5; font-size: 14px; horizontal-alignment: center; }
+                HorizontalLayout { alignment: start; Logo { width: 60px; height: 60px; } }
                 Rectangle { height: 8px; }
-                // segmented switch
-                Rectangle {
-                    height: 44px;
-                    border-radius: 22px;
-                    background: #ffffff14;
-                    Rectangle {
-                        x: root.signup-mode ? parent.width / 2 : 3px;
-                        y: 3px;
-                        width: parent.width / 2 - 3px;
-                        height: parent.height - 6px;
-                        border-radius: 19px;
-                        background: Theme.accent-strong;
-                        animate x { duration: 260ms; easing: cubic-bezier(0.22, 0.9, 0.28, 1); }
-                    }
-                    HorizontalLayout {
-                        TouchArea { clicked => { root.signup-mode = false; } Text { text: "Log in"; color: #ffffff; font-weight: 600; horizontal-alignment: center; vertical-alignment: center; } }
-                        TouchArea { clicked => { root.signup-mode = true; } Text { text: "Sign up"; color: #ffffff; font-weight: 600; horizontal-alignment: center; vertical-alignment: center; } }
-                    }
-                }
-                Rectangle { height: 4px; }
+                Text { text: root.signup-mode ? "Create your account" : "Welcome back"; color: Theme.text; font-size: 28px; font-weight: 600; }
+                Text { text: root.signup-mode ? "Private messaging, in a few seconds." : "Sign in to continue to RootChat."; color: Theme.sub; font-size: 15px; }
+                Rectangle { height: 10px; }
                 Rectangle {
                     height: root.signup-mode ? 128px : 0px;
                     clip: true;
@@ -545,17 +559,17 @@ export component AppWindow inherits Window {
                 email-f := Field { label: "Email"; }
                 pass-f := Field { label: "Password"; password: true; accepted => { submit.clicked(); } }
                 Rectangle {
-                    height: root.auth-error != "" ? 38px : 0px;
+                    height: root.auth-error != "" ? 40px : 0px;
                     clip: true;
                     animate height { duration: 200ms; easing: ease-out; }
                     Rectangle {
-                        background: #ec5b5b26;
-                        border-radius: 10px;
-                        Text { text: root.auth-error; color: #ff8b8b; font-size: 13px; wrap: word-wrap; x: 12px; width: parent.width - 24px; vertical-alignment: center; height: 100%; }
+                        background: #f0616d22;
+                        border-radius: 12px;
+                        Text { text: root.auth-error; color: Theme.danger; font-size: 13px; wrap: word-wrap; x: 14px; width: parent.width - 28px; vertical-alignment: center; height: 100%; }
                     }
                 }
                 submit := PrimaryButton {
-                    label: root.signup-mode ? "Create account" : "Log in";
+                    label: root.signup-mode ? "Create account" : "Sign in";
                     busy: root.busy;
                     clicked => {
                         if (root.signup-mode) {
@@ -565,6 +579,16 @@ export component AppWindow inherits Window {
                         }
                     }
                 }
+                Rectangle { height: 4px; }
+                Rectangle {
+                    height: 44px;
+                    TouchArea { clicked => { root.signup-mode = !root.signup-mode; root.auth-error = ""; } }
+                    Text {
+                        text: root.signup-mode ? "Already have an account? Sign in" : "New here? Create an account";
+                        color: Theme.accent; font-size: 14px; font-weight: 600;
+                        horizontal-alignment: center; vertical-alignment: center; width: 100%; height: 100%;
+                    }
+                }
             }
         }
     }
@@ -572,84 +596,260 @@ export component AppWindow inherits Window {
     // ───────── Main ─────────
     Rectangle {
         visible: root.screen == 2;
-        // ── chat list page
-        list-page := Rectangle {
-            x: root.chat-open ? -root.width * 0.28 * (1 - root.chat-x / root.width) : 0px;
-            background: Theme.bg;
-            VerticalLayout {
-                // header
+
+        VerticalLayout {
+            Rectangle {
+                vertical-stretch: 1;
+                background: Theme.bg;
+                clip: true;
+
+                // ── Chats tab
                 Rectangle {
-                    height: 58px;
-                    background: Theme.header;
-                    HorizontalLayout {
-                        padding-left: 6px; padding-right: 6px; spacing: 4px;
-                        VerticalLayout { alignment: center; RoundButton { d: "M4 7 L20 7 M4 12 L20 12 M4 17 L20 17"; clicked => { root.drawer-open = true; } } }
-                        VerticalLayout {
-                            alignment: center;
-                            horizontal-stretch: 1;
-                            Text { text: !root.online ? "Connecting…" : "RootChat"; color: Theme.text; font-size: 20px; font-weight: 700; }
+                    opacity: root.tab == 0 ? 1.0 : 0.0;
+                    x: root.tab == 0 ? 0px : -14px;
+                    visible: self.opacity > 0.01;
+                    animate opacity, x { duration: 200ms; easing: ease-out; }
+                    VerticalLayout {
+                        Rectangle {
+                            height: 92px;
+                            VerticalLayout {
+                                padding-left: 22px; padding-right: 22px; padding-top: 18px; spacing: 2px;
+                                Title { text: "Chats"; }
+                                Text { text: root.online ? "End-to-end private · real-time" : "Connecting…"; color: root.online ? Theme.sub : Theme.accent; font-size: 13px; }
+                            }
                         }
-                        VerticalLayout { alignment: center; RoundButton { d: "M4 11 A7 7 0 0 1 18 11 A7 7 0 0 1 4 11 M16 16 L21 21"; clicked => { root.search-opened(); root.search-open = true; } } }
+                        Rectangle {
+                            height: 52px;
+                            Rectangle {
+                                x: 16px; y: 2px; width: parent.width - 32px; height: 44px;
+                                border-radius: 16px;
+                                background: sta.pressed ? Theme.surface2 : Theme.surface;
+                                animate background { duration: 120ms; }
+                                sta := TouchArea { clicked => { root.go-tab(1); } }
+                                HorizontalLayout {
+                                    padding-left: 14px; spacing: 10px;
+                                    VerticalLayout { alignment: center; Icon { d: "M4 11 A7 7 0 0 1 18 11 A7 7 0 0 1 4 11 M16 16 L21 21"; c: Theme.sub; size: 18px; } }
+                                    VerticalLayout { alignment: center; Text { text: "Search people"; color: Theme.sub; font-size: 15px; } }
+                                }
+                            }
+                        }
+                        Rectangle {
+                            vertical-stretch: 1;
+                            clip: true;
+                            if root.loading-chats && root.chats.length == 0: VerticalLayout {
+                                for i in 7: SkeletonRow { }
+                            }
+                            if !root.loading-chats && root.chats.length == 0: VerticalLayout {
+                                alignment: center;
+                                spacing: 12px;
+                                Rectangle {
+                                    width: 84px; height: 84px; border-radius: 28px; background: Theme.surface; x: (parent.width - self.width) / 2;
+                                    Icon { d: "M4 5.5 H20 V16.5 H9.5 L5 20.5 V16.5 H4 Z"; c: Theme.accent; size: 38px; x: (parent.width - self.width) / 2; y: (parent.height - self.height) / 2; }
+                                }
+                                Text { text: "No conversations yet"; color: Theme.text; font-size: 18px; font-weight: 600; horizontal-alignment: center; }
+                                Text { text: "Find someone by username to start chatting"; color: Theme.sub; font-size: 14px; horizontal-alignment: center; }
+                            }
+                            Flickable {
+                                content-height: rows.preferred-height + 16px;
+                                rows := VerticalLayout {
+                                    for c in root.chats: ChatRow { c: c; clicked => { root.open-chat(c.id); } }
+                                }
+                            }
+                        }
                     }
                 }
+
+                // ── People tab
                 Rectangle {
-                    vertical-stretch: 1;
-                    background: Theme.bg;
-                    clip: true;
-                    if root.loading-chats && root.chats.length == 0: VerticalLayout {
-                        for i in 7: SkeletonRow { }
+                    opacity: root.tab == 1 ? 1.0 : 0.0;
+                    x: root.tab == 1 ? 0px : (root.tab < 1 ? 14px : -14px);
+                    visible: self.opacity > 0.01;
+                    animate opacity, x { duration: 200ms; easing: ease-out; }
+                    VerticalLayout {
+                        Rectangle {
+                            height: 72px;
+                            VerticalLayout { padding-left: 22px; padding-top: 18px; Title { text: "People"; } }
+                        }
+                        Rectangle {
+                            height: 52px;
+                            Rectangle {
+                                x: 16px; y: 2px; width: parent.width - 32px; height: 44px;
+                                border-radius: 16px;
+                                background: Theme.surface;
+                                border-width: 1.5px;
+                                border-color: people-in.has-focus ? Theme.accent : Theme.line;
+                                animate border-color { duration: 160ms; }
+                                HorizontalLayout {
+                                    padding-left: 14px; padding-right: 12px; spacing: 10px;
+                                    VerticalLayout { alignment: center; Icon { d: "M4 11 A7 7 0 0 1 18 11 A7 7 0 0 1 4 11 M16 16 L21 21"; c: Theme.sub; size: 18px; } }
+                                    Rectangle {
+                                        horizontal-stretch: 1;
+                                        if people-in.text == "": Text { text: "Search by username"; color: Theme.sub; font-size: 15px; vertical-alignment: center; x: 0px; height: 100%; }
+                                        people-in := TextInput {
+                                            height: 100%;
+                                            font-size: 16px; color: Theme.text; single-line: true;
+                                            vertical-alignment: center;
+                                            selection-background-color: Theme.accent;
+                                            edited => { root.search(self.text); }
+                                        }
+                                    }
+                                    if root.searching: VerticalLayout { alignment: center; Spinner { c: Theme.accent; width: 18px; height: 18px; } }
+                                    if !root.searching && people-in.text != "": IconButton {
+                                        d: "M7 7 L17 17 M17 7 L7 17"; c: Theme.sub; glyph: 16px; width: 32px; height: 32px;
+                                        clicked => { people-in.text = ""; root.search(""); }
+                                    }
+                                }
+                            }
+                        }
+                        Rectangle {
+                            vertical-stretch: 1;
+                            clip: true;
+                            if root.results.length == 0: VerticalLayout {
+                                alignment: center;
+                                spacing: 12px;
+                                Rectangle {
+                                    width: 84px; height: 84px; border-radius: 28px; background: Theme.surface; x: (parent.width - self.width) / 2;
+                                    Icon { d: "M9 11 A3.5 3.5 0 1 0 9 4 A3.5 3.5 0 1 0 9 11 M2.5 20.5 A6.5 6.5 0 0 1 15.5 20.5 M16 4.5 A3.5 3.5 0 0 1 16 11 M18.5 14.5 A6.5 6.5 0 0 1 21.5 20.5"; c: Theme.accent; size: 38px; x: (parent.width - self.width) / 2; y: (parent.height - self.height) / 2; }
+                                }
+                                Text { text: people-in.text == "" ? "Find people" : (root.searching ? "Searching…" : "No users found"); color: Theme.text; font-size: 18px; font-weight: 600; horizontal-alignment: center; }
+                                Text { text: "Type a username to start a conversation"; color: Theme.sub; font-size: 14px; horizontal-alignment: center; }
+                            }
+                            Flickable {
+                                content-height: rcol.preferred-height + 16px;
+                                rcol := VerticalLayout {
+                                    for u in root.results: Rectangle {
+                                        height: 72px;
+                                        property <float> appear: 0;
+                                        init => { self.appear = 1; }
+                                        animate appear { duration: 260ms; easing: ease-out; }
+                                        opacity: appear;
+                                        Rectangle {
+                                            x: 8px; width: parent.width - 16px;
+                                            border-radius: 18px;
+                                            background: uta.pressed ? Theme.surface : transparent;
+                                            animate background { duration: 120ms; }
+                                            uta := TouchArea { clicked => { root.start-chat(u.uid); people-in.text = ""; root.search(""); } }
+                                            HorizontalLayout {
+                                                padding-left: 8px; spacing: 13px;
+                                                VerticalLayout { alignment: center; Avatar { width: 50px; height: 50px; initials: u.initials; tint: u.tint; } }
+                                                VerticalLayout {
+                                                    alignment: center; spacing: 3px;
+                                                    Text { text: u.name; color: Theme.text; font-size: 16px; font-weight: 600; overflow: elide; }
+                                                    Text { text: "@" + u.username + (u.bio != "" ? "  ·  " + u.bio : ""); color: Theme.sub; font-size: 14px; overflow: elide; }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     }
-                    if !root.loading-chats && root.chats.length == 0: VerticalLayout {
-                        alignment: center;
-                        spacing: 10px;
-                        Icon { d: "M4 5 L20 5 L20 16 L9 16 L4 21 Z"; c: Theme.sub; size: 64px; x: (parent.width - self.width) / 2; }
-                        Text { text: "No chats yet"; color: Theme.text; font-size: 18px; font-weight: 600; horizontal-alignment: center; }
-                        Text { text: "Tap the pencil to find someone by username"; color: Theme.sub; font-size: 14px; horizontal-alignment: center; }
-                    }
+                }
+
+                // ── Me tab
+                Rectangle {
+                    opacity: root.tab == 2 ? 1.0 : 0.0;
+                    x: root.tab == 2 ? 0px : 14px;
+                    visible: self.opacity > 0.01;
+                    animate opacity, x { duration: 200ms; easing: ease-out; }
                     Flickable {
-                        content-height: rows.preferred-height + 90px;
-                        rows := VerticalLayout {
-                            for c in root.chats: ChatRow { c: c; clicked => { root.open-chat(c.id); } }
+                        content-height: pcol.preferred-height + 24px;
+                        pcol := VerticalLayout {
+                            padding-left: 20px; padding-right: 20px; padding-top: 18px; spacing: 12px;
+                            Title { text: "Profile"; }
+                            Rectangle { height: 8px; }
+                            HorizontalLayout {
+                                spacing: 16px;
+                                Avatar { width: 80px; height: 80px; initials: root.my-initials; tint: root.my-tint; }
+                                VerticalLayout {
+                                    alignment: center; spacing: 3px;
+                                    Text { text: root.my-name; color: Theme.text; font-size: 20px; font-weight: 600; overflow: elide; }
+                                    Text { text: "@" + root.my-username; color: Theme.sub; font-size: 14px; }
+                                }
+                            }
+                            Rectangle { height: 6px; }
+                            pn := Field { label: "Display name"; text: root.my-name; }
+                            pb := Field { label: "Bio"; text: root.my-bio; }
+                            PrimaryButton { label: "Save changes"; clicked => { root.save-profile(pn.text, pb.text); } }
+                            Rectangle { height: 8px; }
+                            Rectangle {
+                                height: 58px;
+                                border-radius: 16px;
+                                background: Theme.surface;
+                                TouchArea { clicked => { root.dark = !root.dark; root.dark-changed(root.dark); } }
+                                HorizontalLayout {
+                                    padding-left: 16px; padding-right: 16px; spacing: 14px;
+                                    VerticalLayout { alignment: center; Icon { d: root.dark ? "M20 14.5 A8 8 0 1 1 9.5 4 A6.5 6.5 0 0 0 20 14.5 Z" : "M12 8 A4 4 0 1 0 12 16 A4 4 0 1 0 12 8 M12 2.5 V4.5 M12 19.5 V21.5 M2.5 12 H4.5 M19.5 12 H21.5 M5.3 5.3 L6.7 6.7 M17.3 17.3 L18.7 18.7 M5.3 18.7 L6.7 17.3 M17.3 6.7 L18.7 5.3"; c: Theme.accent; size: 22px; } }
+                                    VerticalLayout { alignment: center; horizontal-stretch: 1; Text { text: root.dark ? "Dark theme" : "Light theme"; color: Theme.text; font-size: 16px; } }
+                                    VerticalLayout {
+                                        alignment: center;
+                                        Rectangle {
+                                            width: 46px; height: 28px; border-radius: 14px;
+                                            background: root.dark ? Theme.accent-solid : Theme.surface2;
+                                            animate background { duration: 200ms; }
+                                            Rectangle {
+                                                width: 22px; height: 22px; border-radius: 11px; background: root.dark ? Theme.on-accent : #ffffff;
+                                                y: 3px;
+                                                x: root.dark ? 21px : 3px;
+                                                animate x { duration: 200ms; easing: cubic-bezier(0.22, 0.9, 0.28, 1); }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            Rectangle {
+                                height: 58px;
+                                border-radius: 16px;
+                                background: lta.pressed ? Theme.surface2 : Theme.surface;
+                                animate background { duration: 120ms; }
+                                lta := TouchArea { clicked => { root.logout(); } }
+                                HorizontalLayout {
+                                    padding-left: 16px; spacing: 14px;
+                                    VerticalLayout { alignment: center; Icon { d: "M9 4 H5 V20 H9 M15 8 L20 12 L15 16 M20 12 H9"; c: Theme.danger; size: 22px; } }
+                                    VerticalLayout { alignment: center; Text { text: "Sign out"; color: Theme.danger; font-size: 16px; } }
+                                }
+                            }
+                            Text { text: "RootChat 2.0 · built with Rust"; color: Theme.sub; font-size: 12px; horizontal-alignment: center; }
                         }
                     }
                 }
             }
-                    // FAB
-                    Rectangle {
-                        width: 58px; height: 58px;
-                        x: parent.width - 58px - 18px;
-                        y: parent.height - 58px - 22px;
-                        border-radius: 29px;
-                        background: Theme.accent-strong;
-                        drop-shadow-blur: 14px;
-                        drop-shadow-color: #00000066;
-                        drop-shadow-offset-y: 4px;
-                        property <float> pop: 0;
-                        init => { self.pop = 1; }
-                        animate pop { duration: 420ms; easing: cubic-bezier(0.3, 1.5, 0.5, 1); }
-                        transform-scale: fab.pressed ? 0.92 * pop : pop;
-                        animate transform-scale { duration: 120ms; }
-                        fab := TouchArea { clicked => { root.search-opened(); root.search-open = true; } }
-                        Icon { d: "M4 20 L4 16 L16 4 L20 8 L8 20 Z"; c: #ffffff; size: 24px; x: (parent.width - self.width) / 2; y: (parent.height - self.height) / 2; }
-                    }
-            Rectangle { background: #000000; opacity: root.chat-open ? 0.35 * (1 - root.chat-x / root.width) : 0; }
+
+            // ── tab bar
+            Rectangle {
+                height: 64px;
+                background: Theme.bg;
+                Rectangle { height: 1px; background: Theme.line; }
+                Rectangle {
+                    y: 0px;
+                    height: 2px;
+                    width: 28px;
+                    x: parent.width / 6 * (1 + 2 * root.tab) - 14px;
+                    border-radius: 1px;
+                    background: Theme.accent;
+                    animate x { duration: 280ms; easing: cubic-bezier(0.22, 0.9, 0.28, 1); }
+                }
+                HorizontalLayout {
+                    TabButton { d: "M4 5.5 H20 V16.5 H9.5 L5 20.5 V16.5 H4 Z"; label: "Chats"; active: root.tab == 0; badge: root.unread-total; clicked => { root.go-tab(0); } }
+                    TabButton { d: "M9 11 A3.5 3.5 0 1 0 9 4 A3.5 3.5 0 1 0 9 11 M2.5 20.5 A6.5 6.5 0 0 1 15.5 20.5 M16 4.5 A3.5 3.5 0 0 1 16 11 M18.5 14.5 A6.5 6.5 0 0 1 21.5 20.5"; label: "People"; active: root.tab == 1; clicked => { root.go-tab(1); } }
+                    TabButton { d: "M12 11 A4 4 0 1 0 12 3 A4 4 0 1 0 12 11 M4 21 A8 8 0 0 1 20 21"; label: "Profile"; active: root.tab == 2; clicked => { root.go-tab(2); } }
+                }
+            }
         }
 
-        // ── chat page
-        chat-page := Rectangle {
+        // ── chat page (slides over)
+        Rectangle {
             x: root.chat-x;
             background: Theme.chat-bg;
             visible: root.chat-x < root.width;
-            drop-shadow-blur: 18px;
-            drop-shadow-color: #00000055;
             VerticalLayout {
                 Rectangle {
-                    height: 58px;
-                    background: Theme.header;
+                    height: 62px;
+                    background: Theme.bg;
                     HorizontalLayout {
-                        padding-left: 4px; padding-right: 8px; spacing: 6px;
-                        VerticalLayout { alignment: center; RoundButton { d: "M15 5 L8 12 L15 19"; c: Theme.text; clicked => { root.close-chat(); } } }
-                        VerticalLayout { alignment: center; Avatar { width: 40px; height: 40px; initials: root.chat-initials; tint: root.chat-tint; online: root.chat-online; } }
+                        padding-left: 6px; padding-right: 8px; spacing: 8px;
+                        VerticalLayout { alignment: center; IconButton { d: "M15 5 L8 12 L15 19"; clicked => { root.close-chat(); } } }
+                        VerticalLayout { alignment: center; Avatar { width: 42px; height: 42px; initials: root.chat-initials; tint: root.chat-tint; online: root.chat-online; } }
                         VerticalLayout {
                             alignment: center;
                             horizontal-stretch: 1;
@@ -663,6 +863,7 @@ export component AppWindow inherits Window {
                             }
                         }
                     }
+                    Rectangle { y: parent.height - 1px; height: 1px; background: Theme.line; }
                 }
                 Rectangle {
                     vertical-stretch: 1;
@@ -681,7 +882,6 @@ export component AppWindow inherits Window {
                                     if (m.mine && !m.deleted && !m.pending) {
                                         root.sheet-id = m.id;
                                         root.sheet-text = m.text;
-                                        root.sheet-mine = true;
                                         root.sheet-open = true;
                                     }
                                 }
@@ -689,45 +889,44 @@ export component AppWindow inherits Window {
                             TypingBubble { active: root.peer-typing; }
                         }
                     }
-                    // scroll-to-bottom
                     Rectangle {
-                        width: 42px; height: 42px; border-radius: 21px;
+                        width: 42px; height: 42px; border-radius: 14px;
                         x: parent.width - 42px - 14px;
                         y: parent.height - 42px - 12px + (root.at-bottom ? 70px : 0px);
                         animate y { duration: 220ms; easing: ease-out; }
-                        background: Theme.header;
-                        drop-shadow-blur: 8px; drop-shadow-color: #00000055; drop-shadow-offset-y: 2px;
+                        background: Theme.surface2;
                         TouchArea { clicked => { root.scroll-bottom(); } }
-                        Icon { d: "M6 9 L12 15 L18 9"; c: Theme.sub; size: 22px; x: (parent.width - self.width) / 2; y: (parent.height - self.height) / 2; }
+                        Icon { d: "M6 9.5 L12 15.5 L18 9.5"; c: Theme.text; size: 20px; x: (parent.width - self.width) / 2; y: (parent.height - self.height) / 2; }
                     }
                 }
                 // composer
                 Rectangle {
-                    background: Theme.header;
+                    background: Theme.bg;
                     height: cbox.preferred-height;
+                    Rectangle { height: 1px; background: Theme.line; }
                     cbox := VerticalLayout {
                         if root.editing-id != "": Rectangle {
                             height: 40px;
                             HorizontalLayout {
-                                padding-left: 14px; padding-right: 6px; spacing: 10px;
-                                VerticalLayout { alignment: center; Icon { d: "M4 20 L4 16 L16 4 L20 8 L8 20 Z"; c: Theme.accent; size: 20px; } }
-                                VerticalLayout { alignment: center; horizontal-stretch: 1; Text { text: "Edit message"; color: Theme.accent; font-weight: 600; font-size: 13px; } }
-                                VerticalLayout { alignment: center; RoundButton { d: "M6 6 L18 18 M18 6 L6 18"; glyph: 18px; clicked => { root.editing-id = ""; comp.text = ""; } } }
+                                padding-left: 16px; padding-right: 6px; spacing: 10px;
+                                VerticalLayout { alignment: center; Icon { d: "M4 20 V16 L16 4 L20 8 L8 20 Z"; c: Theme.accent; size: 18px; } }
+                                VerticalLayout { alignment: center; horizontal-stretch: 1; Text { text: "Editing message"; color: Theme.accent; font-weight: 600; font-size: 13px; } }
+                                VerticalLayout { alignment: center; IconButton { d: "M7 7 L17 17 M17 7 L7 17"; glyph: 16px; clicked => { root.editing-id = ""; comp.text = ""; } } }
                             }
                         }
                         HorizontalLayout {
-                            padding: 8px; spacing: 8px;
+                            padding: 10px; spacing: 10px;
                             Rectangle {
                                 horizontal-stretch: 1;
-                                height: max(42px, min(130px, comp.preferred-height + 18px));
-                                border-radius: 21px;
-                                background: Theme.field;
+                                height: max(46px, min(130px, comp.preferred-height + 22px));
+                                border-radius: 23px;
+                                background: Theme.surface;
                                 animate height { duration: 120ms; }
-                                if comp.text == "": Text { text: "Message"; color: Theme.sub; font-size: 16px; x: 16px; y: (parent.height - self.height) / 2; }
+                                if comp.text == "": Text { text: "Message"; color: Theme.sub; font-size: 16px; x: 18px; y: (parent.height - self.height) / 2; }
                                 comp := TextInput {
-                                    x: 16px; y: 9px;
-                                    width: parent.width - 32px;
-                                    height: parent.height - 18px;
+                                    x: 18px; y: 11px;
+                                    width: parent.width - 36px;
+                                    height: parent.height - 22px;
                                     font-size: 16px;
                                     color: Theme.text;
                                     wrap: word-wrap;
@@ -739,13 +938,13 @@ export component AppWindow inherits Window {
                             VerticalLayout {
                                 alignment: end;
                                 Rectangle {
-                                    width: 44px; height: 44px; border-radius: 22px;
+                                    width: 46px; height: 46px; border-radius: 23px;
                                     property <bool> ready: comp.text != "";
-                                    background: ready ? Theme.accent-strong : transparent;
+                                    background: ready ? Theme.accent-solid : Theme.surface;
                                     animate background { duration: 180ms; }
-                                    transform-scale: sta.pressed ? 0.9 : 1.0;
+                                    transform-scale: sta2.pressed ? 0.9 : 1.0;
                                     animate transform-scale { duration: 100ms; }
-                                    sta := TouchArea {
+                                    sta2 := TouchArea {
                                         enabled: parent.ready;
                                         clicked => {
                                             if (root.editing-id != "") {
@@ -758,197 +957,15 @@ export component AppWindow inherits Window {
                                         }
                                     }
                                     Icon {
-                                        d: "M3 11 L21 3 L14 21 L11 13 Z";
-                                        solid: true;
-                                        c: parent.ready ? #ffffff : Theme.sub;
+                                        d: root.editing-id != "" ? "M5 12.5 L10 17.5 L19 7.5" : "M21 3 L10 14 M21 3 L14.5 21 L10 14 L3 9.5 Z";
+                                        c: parent.ready ? Theme.on-accent : Theme.sub;
                                         size: 22px;
-                                        x: (parent.width - self.width) / 2 - 1px;
+                                        x: (parent.width - self.width) / 2;
                                         y: (parent.height - self.height) / 2;
-                                        opacity: parent.ready ? 1.0 : 0.5;
-                                        animate opacity { duration: 180ms; }
                                     }
                                 }
                             }
                         }
-                    }
-                }
-            }
-        }
-
-        // ── drawer
-        Rectangle {
-            visible: root.drawer-open || root.drawer-x > -300px;
-            Rectangle {
-                background: Theme.scrim;
-                opacity: root.drawer-open ? 0.5 : 0.0;
-                animate opacity { duration: 260ms; }
-                TouchArea { clicked => { root.drawer-open = false; } }
-            }
-            Rectangle {
-                x: root.drawer-x;
-                width: 290px;
-                background: Theme.bg;
-                drop-shadow-blur: 20px; drop-shadow-color: #00000066;
-                VerticalLayout {
-                    Rectangle {
-                        height: 168px;
-                        background: @linear-gradient(160deg, #2b5278 0%, #1b3652 100%);
-                        VerticalLayout {
-                            alignment: end; padding: 18px; spacing: 4px;
-                            Avatar { width: 64px; height: 64px; initials: root.my-initials; tint: root.my-tint; }
-                            Rectangle { height: 6px; }
-                            Text { text: root.my-name; color: #ffffff; font-weight: 700; font-size: 17px; overflow: elide; }
-                            Text { text: "@" + root.my-username; color: #b6cde3; font-size: 13px; }
-                        }
-                    }
-                    for item[i] in [
-                        { label: "My profile", d: "M12 4 A4 4 0 1 1 11.99 4 M4 20 A8 8 0 0 1 20 20" },
-                        { label: "New chat", d: "M4 20 L4 16 L16 4 L20 8 L8 20 Z" },
-                    ]: Rectangle {
-                        height: 54px;
-                        background: dta.pressed ? Theme.press : transparent;
-                        animate background { duration: 120ms; }
-                        dta := TouchArea {
-                            clicked => {
-                                root.drawer-open = false;
-                                if (i == 0) { root.profile-open = true; } else { root.search-opened(); root.search-open = true; }
-                            }
-                        }
-                        HorizontalLayout {
-                            padding-left: 20px; spacing: 22px;
-                            VerticalLayout { alignment: center; Icon { d: item.d; c: Theme.sub; size: 24px; } }
-                            VerticalLayout { alignment: center; Text { text: item.label; color: Theme.text; font-size: 16px; font-weight: 500; } }
-                        }
-                    }
-                    Rectangle {
-                        height: 54px;
-                        background: nta.pressed ? Theme.press : transparent;
-                        nta := TouchArea { clicked => { root.dark = !root.dark; root.dark-changed(root.dark); } }
-                        HorizontalLayout {
-                            padding-left: 20px; padding-right: 20px; spacing: 22px;
-                            VerticalLayout { alignment: center; Icon { d: "M20 14 A8 8 0 1 1 10 4 A6.5 6.5 0 0 0 20 14 Z"; c: Theme.sub; size: 24px; } }
-                            VerticalLayout { alignment: center; horizontal-stretch: 1; Text { text: "Night mode"; color: Theme.text; font-size: 16px; font-weight: 500; } }
-                            VerticalLayout {
-                                alignment: center;
-                                Rectangle {
-                                    width: 44px; height: 26px; border-radius: 13px;
-                                    background: root.dark ? Theme.accent-strong : #9aa5af;
-                                    animate background { duration: 200ms; }
-                                    Rectangle {
-                                        width: 20px; height: 20px; border-radius: 10px; background: #ffffff;
-                                        y: 3px;
-                                        x: root.dark ? 21px : 3px;
-                                        animate x { duration: 200ms; easing: cubic-bezier(0.22, 0.9, 0.28, 1); }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    Rectangle { height: 1px; background: Theme.divider; }
-                    Rectangle {
-                        height: 54px;
-                        background: lta.pressed ? Theme.press : transparent;
-                        lta := TouchArea { clicked => { root.drawer-open = false; root.logout(); } }
-                        HorizontalLayout {
-                            padding-left: 20px; spacing: 22px;
-                            VerticalLayout { alignment: center; Icon { d: "M9 4 L4 4 L4 20 L9 20 M15 8 L20 12 L15 16 M20 12 L9 12"; c: Theme.danger; size: 24px; } }
-                            VerticalLayout { alignment: center; Text { text: "Log out"; color: Theme.danger; font-size: 16px; font-weight: 500; } }
-                        }
-                    }
-                    Rectangle { vertical-stretch: 1; }
-                    Text { text: "RootChat 2.0 · native Rust"; color: Theme.sub; font-size: 12px; horizontal-alignment: center; height: 36px; vertical-alignment: center; }
-                }
-            }
-        }
-
-        // ── search / new chat (slides up)
-        Rectangle {
-            y: root.search-y;
-            visible: root.search-y < root.height;
-            background: Theme.bg;
-            VerticalLayout {
-                Rectangle {
-                    height: 58px;
-                    background: Theme.header;
-                    HorizontalLayout {
-                        padding-left: 4px; padding-right: 10px; spacing: 4px;
-                        VerticalLayout { alignment: center; RoundButton { d: "M15 5 L8 12 L15 19"; c: Theme.text; clicked => { root.search-open = false; sin.text = ""; } } }
-                        VerticalLayout {
-                            alignment: center; horizontal-stretch: 1;
-                            Rectangle {
-                                height: 40px;
-                                if sin.text == "": Text { text: "Search by username"; color: Theme.sub; font-size: 16px; vertical-alignment: center; height: 100%; }
-                                sin := TextInput {
-                                    height: 100%;
-                                    font-size: 16px; color: Theme.text; single-line: true;
-                                    vertical-alignment: center;
-                                    selection-background-color: Theme.accent;
-                                    edited => { root.search(self.text); }
-                                }
-                            }
-                        }
-                        if root.searching: VerticalLayout { alignment: center; Spinner { c: Theme.accent; } }
-                    }
-                }
-                Rectangle {
-                    vertical-stretch: 1;
-                    clip: true;
-                    if root.results.length == 0: Text {
-                        text: sin.text == "" ? "Type a username to find people" : (root.searching ? "" : "No users found");
-                        color: Theme.sub; font-size: 14px;
-                        horizontal-alignment: center; vertical-alignment: center;
-                    }
-                    Flickable {
-                        content-height: rcol.preferred-height;
-                        rcol := VerticalLayout {
-                            for u in root.results: Rectangle {
-                                height: 70px;
-                                background: uta.pressed ? Theme.press : transparent;
-                                animate background { duration: 120ms; }
-                                property <float> appear: 0;
-                                init => { self.appear = 1; }
-                                animate appear { duration: 260ms; easing: ease-out; }
-                                opacity: appear;
-                                uta := TouchArea { clicked => { root.start-chat(u.uid); sin.text = ""; } }
-                                HorizontalLayout {
-                                    padding-left: 14px; spacing: 12px;
-                                    VerticalLayout { alignment: center; Avatar { width: 50px; height: 50px; initials: u.initials; tint: u.tint; } }
-                                    VerticalLayout {
-                                        alignment: center; spacing: 2px;
-                                        Text { text: u.name; color: Theme.text; font-size: 16px; font-weight: 600; overflow: elide; }
-                                        Text { text: "@" + u.username + (u.bio != "" ? " · " + u.bio : ""); color: Theme.sub; font-size: 14px; overflow: elide; }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        // ── profile
-        Rectangle {
-            x: root.profile-x;
-            visible: root.profile-x < root.width;
-            background: Theme.bg;
-            VerticalLayout {
-                Rectangle {
-                    height: 58px; background: Theme.header;
-                    HorizontalLayout {
-                        padding-left: 4px; spacing: 6px;
-                        VerticalLayout { alignment: center; RoundButton { d: "M15 5 L8 12 L15 19"; c: Theme.text; clicked => { root.profile-open = false; } } }
-                        VerticalLayout { alignment: center; Text { text: "My profile"; color: Theme.text; font-size: 19px; font-weight: 700; } }
-                    }
-                }
-                Flickable {
-                    content-height: pcol.preferred-height + 30px;
-                    pcol := VerticalLayout {
-                        padding: 20px; spacing: 14px;
-                        HorizontalLayout { alignment: center; Avatar { width: 104px; height: 104px; initials: root.my-initials; tint: root.my-tint; } }
-                        Text { text: "@" + root.my-username; color: Theme.sub; horizontal-alignment: center; font-size: 15px; }
-                        pn := Field { label: "Display name"; text: root.my-name; }
-                        pb := Field { label: "Bio"; text: root.my-bio; }
-                        PrimaryButton { label: "Save changes"; clicked => { root.save-profile(pn.text, pb.text); } }
                     }
                 }
             }
@@ -956,25 +973,25 @@ export component AppWindow inherits Window {
 
         // ── message action sheet
         Rectangle {
-            visible: root.sheet-open || root.sheet-y < 220px;
+            visible: root.sheet-open || root.sheet-y < 200px;
             Rectangle {
                 background: #000000;
-                opacity: root.sheet-open ? 0.45 : 0.0;
+                opacity: root.sheet-open ? 0.5 : 0.0;
                 animate opacity { duration: 220ms; }
                 TouchArea { clicked => { root.sheet-open = false; } }
             }
             Rectangle {
-                y: parent.height - 200px + root.sheet-y;
-                height: 200px;
-                background: Theme.header;
-                border-top-left-radius: 20px;
-                border-top-right-radius: 20px;
+                y: parent.height - 190px + root.sheet-y;
+                height: 190px;
+                background: Theme.dark ? #14181d : #ffffff;
+                border-top-left-radius: 24px;
+                border-top-right-radius: 24px;
                 VerticalLayout {
                     padding-top: 10px;
-                    Rectangle { height: 14px; Rectangle { width: 40px; height: 4px; border-radius: 2px; background: Theme.sub; opacity: 0.5; } }
+                    Rectangle { height: 16px; Rectangle { width: 36px; height: 4px; border-radius: 2px; background: Theme.sub; opacity: 0.4; } }
                     Rectangle {
                         height: 58px;
-                        background: eta.pressed ? Theme.press : transparent;
+                        background: eta.pressed ? Theme.surface : transparent;
                         eta := TouchArea {
                             clicked => {
                                 root.editing-id = root.sheet-id;
@@ -984,19 +1001,19 @@ export component AppWindow inherits Window {
                             }
                         }
                         HorizontalLayout {
-                            padding-left: 22px; spacing: 20px;
-                            VerticalLayout { alignment: center; Icon { d: "M4 20 L4 16 L16 4 L20 8 L8 20 Z"; c: Theme.text; size: 22px; } }
-                            VerticalLayout { alignment: center; Text { text: "Edit"; color: Theme.text; font-size: 16px; font-weight: 500; } }
+                            padding-left: 24px; spacing: 18px;
+                            VerticalLayout { alignment: center; Icon { d: "M4 20 V16 L16 4 L20 8 L8 20 Z"; c: Theme.text; size: 22px; } }
+                            VerticalLayout { alignment: center; Text { text: "Edit message"; color: Theme.text; font-size: 16px; } }
                         }
                     }
                     Rectangle {
                         height: 58px;
-                        background: dta2.pressed ? Theme.press : transparent;
+                        background: dta2.pressed ? Theme.surface : transparent;
                         dta2 := TouchArea { clicked => { root.delete-message(root.sheet-id); root.sheet-open = false; } }
                         HorizontalLayout {
-                            padding-left: 22px; spacing: 20px;
-                            VerticalLayout { alignment: center; Icon { d: "M5 7 L19 7 M9 7 L9 4 L15 4 L15 7 M7 7 L8 20 L16 20 L17 7"; c: Theme.danger; size: 22px; } }
-                            VerticalLayout { alignment: center; Text { text: "Delete"; color: Theme.danger; font-size: 16px; font-weight: 500; } }
+                            padding-left: 24px; spacing: 18px;
+                            VerticalLayout { alignment: center; Icon { d: "M5 7 H19 M9.5 7 V4.5 H14.5 V7 M7 7 L8 20 H16 L17 7"; c: Theme.danger; size: 22px; } }
+                            VerticalLayout { alignment: center; Text { text: "Delete message"; color: Theme.danger; font-size: 16px; } }
                         }
                     }
                 }
@@ -1006,13 +1023,13 @@ export component AppWindow inherits Window {
 
     // ───────── Toast ─────────
     Rectangle {
-        width: min(root.width - 40px, toast-text.preferred-width + 36px);
-        height: 42px;
+        width: min(root.width - 40px, toast-text.preferred-width + 40px);
+        height: 44px;
         x: (root.width - self.width) / 2;
-        y: root.toast != "" ? 52px : -60px;
+        y: root.toast != "" ? 48px : -60px;
         animate y { duration: 280ms; easing: cubic-bezier(0.3, 1.4, 0.5, 1); }
-        border-radius: 21px;
-        background: #202c39ee;
+        border-radius: 22px;
+        background: Theme.dark ? #232b33 : #0e1216;
         visible: self.y > -59px;
         toast-text := Text { text: root.toast; color: #ffffff; font-size: 14px; horizontal-alignment: center; vertical-alignment: center; width: 100%; height: 100%; overflow: elide; }
     }
