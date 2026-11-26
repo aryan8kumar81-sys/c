@@ -307,7 +307,9 @@ fn poll_chats(ctx: &Ctx) {
     }
     rows.sort_by(|a, b| b.0.cmp(&a.0));
     let items: Vec<ChatItem> = rows.into_iter().map(|r| r.1).collect();
+    let total: i32 = items.iter().map(|c| c.unread).sum();
     ctx.ui_do(move |ui| {
+        ui.set_unread_total(total);
         CHATS.with(|m| sync(m, items));
         ui.set_loading_chats(false);
     });
@@ -340,7 +342,7 @@ fn open_chat(ctx: &Ctx, cid: String) {
         ui.set_chat_status(format!("@{uname}").into());
         ui.set_chat_online(false);
         ui.set_peer_typing(false);
-        ui.set_search_open(false);
+        ui.set_tab(0);
         ui.set_chat_open(true);
     });
     let c = ctx.clone();
@@ -803,9 +805,7 @@ fn do_logout(ctx: &Ctx) {
         clear_file("session.json");
         c.ui_do(|ui| {
             ui.set_chat_open(false);
-            ui.set_search_open(false);
-            ui.set_profile_open(false);
-            ui.set_drawer_open(false);
+            ui.set_tab(0);
             CHATS.with(|m| m.set_vec(Vec::new()));
             MSGS.with(|m| m.set_vec(Vec::new()));
             RESULTS.with(|m| m.set_vec(Vec::new()));
@@ -834,7 +834,6 @@ fn save_profile(ctx: &Ctx, name: String, bio: String) {
                 p
             };
             apply_profile(&c, &p);
-            c.ui_do(|ui| ui.set_profile_open(false));
             c.toast("Profile saved");
         } else {
             c.toast("Could not save profile");
