@@ -3601,9 +3601,11 @@ dependencies = [
 name = "rootchat"
 version = "2.0.0"
 dependencies = [
+ "android-activity 0.6.1",
  "chrono",
  "fastrand",
  "jni 0.21.1",
+ "log",
  "ndk-context",
  "png 0.17.16",
  "serde_json",
